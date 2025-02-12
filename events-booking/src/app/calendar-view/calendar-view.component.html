@@ -1,0 +1,28 @@
+<mat-card>
+    <mat-card-title>Selected Category: {{ selectedCategory }}</mat-card-title>
+  
+    <div class="week-navigation">
+      <button (click)="previousWeek()">Previous Week</button>
+      <span>{{ currentWeek[0] | date: 'mediumDate' }} - {{ currentWeek[6] | date: 'mediumDate' }}</span>
+      <button (click)="nextWeek()">Next Week</button>
+    </div>
+  
+    <div class="calendar">
+      <button *ngFor="let date of currentWeek" (click)="onDateSelect(date.toISOString().split('T')[0])">
+        {{ date | date: 'EEE, MMM d' }}
+      </button>
+    </div>
+  
+    <mat-card *ngIf="date_selected">
+      <mat-card-title>Available Time Slots for {{ selectedDate|date }}</mat-card-title>
+      <mat-card-content>
+        <div *ngFor="let slot of timeSlots">
+          <button *ngIf="!isSubscribed" (click)="subscribe(slot)" id="slot">{{ slot }}</button>
+          <button *ngIf="isSubscribed" (click)="unsubscribe(slot)" id="slot">Unsubscribe {{ slot }}</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-card>
+<div class="admin">
+    <button class="admin-container" (click)="addEvent()">Add Event</button>
+</div>

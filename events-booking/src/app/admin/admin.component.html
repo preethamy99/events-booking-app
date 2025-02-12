@@ -1,0 +1,41 @@
+<div class="admin-container" *ngIf="adminLogin">
+    <h2>Add Time Slot</h2>
+  
+    <form (ngSubmit)="addTimeSlot()">
+      <div>
+        <label for="date">Date:</label>
+        <input type="date" id="date" [(ngModel)]="date" name="date" required>
+      </div>
+  
+      <div>
+        <label for="category">Category:</label>
+        <select id="category" [(ngModel)]="category" name="category" required>
+          <option *ngFor="let cat of availableCategories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+  
+      <div>
+        <label for="slots">Time Slots (comma separated):</label>
+        <input type="text" id="slots" [(ngModel)]="slots" name="slots" placeholder="e.g., 09:00, 11:00, 13:00" required>
+    </div>
+
+    <button type="submit">Add Time Slot</button>
+  </form>
+</div>
+
+<div class="admin-login" *ngIf="!adminLogin"> 
+    <form (ngSubmit)="onSubmit()">
+        <div class="admin-email">
+            <label for="email">Email: </label>
+            <input type="email" id="email" [(ngModel)]="admin.email" required name="email">
+        </div>
+        <div class="admin-password">
+            <label for="password">Password: </label>
+            <input type="password" id="password" [(ngModel)]="admin.password" required name="password">
+        </div>
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+
+

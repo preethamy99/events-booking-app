@@ -1,0 +1,20 @@
+<!-- <mat-card>
+    <mat-card-title>Select Event Categories</mat-card-title>
+    <mat-checkbox-group [(ngModel)]="selectedCategories" (change)="onCategoryChange($event)">
+      <mat-checkbox *ngFor="let category of categories" [value]="category">{{ category }}</mat-checkbox>
+    </mat-checkbox-group>
+</mat-card> -->
+<mat-card>
+    <mat-card-title>Select Event Category</mat-card-title>
+    <div class="category-cards">
+      <mat-card *ngFor="let category of categories" (click)="onCategorySelect(category)" class="category-card">
+        <mat-card-header>
+          <mat-card-title>{{ category }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,  </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-card>
+  
