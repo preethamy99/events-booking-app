@@ -29,21 +29,32 @@ export class AdminComponent {
     'password':''
   }
   onSubmit(){
-    if(this.eventService.verifyAdmin(this.admin)){
-      this.adminLogin = true;
+    let val = this.eventService.verifyAdmin(this.admin); 
+    this.adminLogin = true;
+    if(val === false){
+      alert('Enter correct email or password');
     }
-    else{
-      alert('Enter correct email, password');
-    }
+
   }
 
   addTimeSlot() {
     if (this.date && this.category && this.slots.length > 0) {
-      console.log(this.slots);
-      this.eventService.addTimeSlot(this.date, this.category, this.slots);
-      alert('Time slots added successfully!');
-    } else {
-      alert('Please fill in all fields.');
+    let data = {
+      "date": this.date,
+      "category": this.category,
+      "slots": this.slots
+    }
+      let val = this.eventService.addTimeSlot(data);
+      if(val){
+        alert('Time slots added successfully!');
+      }
+      else{
+        alert('Time slot is not added');
+      }
+    }
+    else {
+        alert('Please fill in all fields.');
     }
   }
 }
+
