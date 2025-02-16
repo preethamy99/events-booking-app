@@ -8,6 +8,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
+interface TimeSlot {
+  time: string;
+  subscribed: boolean;
+}
+
 @Component({
   selector: 'app-calendar-view',
   imports: [MatCardModule, MatGridListModule, CommonModule, RouterModule, FormsModule],
@@ -45,7 +50,7 @@ export class CalendarViewComponent {
 
     // Set today's date as the selected date
     this.selectedDate = this.currentWeek[0].toISOString().split('T')[0]; // Start of the week (Sunday)
-    this.loadTimeSlots();
+    // this.loadTimeSlots();
   }
 
   // Method to get the start of the week (Sunday)
@@ -67,31 +72,35 @@ export class CalendarViewComponent {
   }
 
   // Method to load the time slots for the selected category and date
-  loadTimeSlots(): void {
-    if (this.selectedCategory) {
-      this.timeSlots = this.eventService.getTimeSlotsByCategory(this.selectedCategory);
-      this.checkUserSubscription();
-    }
-  }
+  // loadTimeSlots(): void {
+  //   if (this.selectedCategory) {
+  //     this.timeSlots = this.eventService.getTimeSlotsByCategory(this.selectedCategory);
+  //     this.checkUserSubscription();
+  //   }
+  // }
 
   // Method to select a date (when the user clicks on a date)
+  subs : TimeSlot[] = [];
   onDateSelect(date: string): void {
     this.selectedDate = date;
     this.date_selected = true;
-    this.timeSlots = this.eventService.getTimeSlotsByDate(date, this.selectedCategory || '');
+    this.eventService.getTimeSlotsByDate(date, this.selectedCategory || '').subscribe((resp:any)=>{
+      this.timeSlots = resp;
+    });
+    console.log(this.timeSlots);
     if(this.timeSlots.length < 1){
       this.timeSlots.push('No Events');
     }
-    this.checkUserSubscription();
+    // this.checkUserSubscription();
   }
 
   // Check if the user has already subscribed to an event
-  checkUserSubscription(): void {
-    if (this.selectedDate && this.selectedCategory) {
-      const subscription = this.eventService.getUserSubscription(this.selectedDate, this.selectedCategory, this.user);
-      this.isSubscribed = !!subscription;
-    }
-  }
+  // checkUserSubscription(): void {
+  //   if (this.selectedDate && this.selectedCategory) {
+  //     const subscription = this.eventService.getUserSubscription(this.selectedDate, this.selectedCategory, this.user);
+  //     this.isSubscribed = !!subscription;
+  //   }
+  // }
   // getSubscribedSlots() {
   //   const subscriptions = this.eventService.getSubscriptions(this.selectedDate, this.selectedCategory);
   //   return subscriptions.filter(sub => sub.user === this.user).map(sub => sub.slot);
@@ -106,7 +115,7 @@ export class CalendarViewComponent {
     nextWeekStart.setDate(nextWeekStart.getDate() + 1); // Move to next week
     this.currentWeek = this.generateWeek(this.getStartOfWeek(nextWeekStart));
     this.selectedDate = this.currentWeek[0].toISOString().split('T')[0]; // Start of the next week
-    this.loadTimeSlots();
+    // this.loadTimeSlots();
   }
 
   // Method to navigate to the previous week
@@ -118,25 +127,55 @@ export class CalendarViewComponent {
     prevWeekStart.setDate(prevWeekStart.getDate() - 7); // Move to previous week
     this.currentWeek = this.generateWeek(this.getStartOfWeek(prevWeekStart));
     this.selectedDate = this.currentWeek[0].toISOString().split('T')[0]; // Start of the previous week
-    this.loadTimeSlots();
+    // this.loadTimeSlots();
   }
 
   // Subscribe to a time slot
+  subscribed: any;
   subscribe(slot: string): void {
     if (this.selectedDate && this.selectedCategory) {
-      this.eventService.subscribeToSlot(this.selectedDate, this.selectedCategory, slot, this.user);
-      this.checkUserSubscription();
+      let data = {
+        'date': this.selectedDate,
+        'category': this.selectedCategory,
+        'slot': slot,
+        'user': this.user
+            }
+      let ts: TimeSlot[] = [];
+      for(let i = 0; i < this.timeSlots.length; i++){
+        ts.push({'time': this.timeSlots[i], 'subscribed': false});
+      }
+      this.subs = ts;
+      console.log(this.subs);
+      for(let i = 0; i < this.subs.length; i++){
+        if(this.subs[i].time === slot){
+          this.subs[i].subscribed = true;
+        }
+        this.subs[i].subscribed = false;
+      }
+      // this.timeSlots = this.subscribed;
+      console.log(this.subs);
+      this.eventService.subscribeToSlot(data);
+      // this.checkUserSubscription();
       // this.loadTimeSlots();
+      this.isSubscribed = !this.isSubscribed;
     }
   }
 
   // Unsubscribe from a time slot
   unsubscribe(slot: string): void {
-    if (this.selectedDate && this.selectedCategory) {
-      this.eventService.unsubscribeFromSlot(this.selectedDate, this.selectedCategory, slot);
-      this.checkUserSubscription();
-      // this.loadTimeSlots();
-    }
+    let data = {
+      'date': this.selectedDate,
+      'category': this.selectedCategory,
+      'slot': slot,
+      'user': this.user
+          }
+    this.eventService.unsubscribeFromSlot(data);
+    this.isSubscribed = !this.isSubscribed;
+  //   if (this.selectedDate && this.selectedCategory) {
+  //     this.eventService.unsubscribeFromSlot(this.selectedDate, this.selectedCategory, slot);
+  //     this.checkUserSubscription();
+  //     // this.loadTimeSlots();
+  //   }
   }
 
   adminLogin = false;

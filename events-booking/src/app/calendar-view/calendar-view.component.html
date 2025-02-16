@@ -17,8 +17,8 @@
       <mat-card-title>Available Time Slots for {{ selectedDate|date }}</mat-card-title>
       <mat-card-content>
         <div *ngFor="let slot of timeSlots">
-          <button *ngIf="!isSubscribed" (click)="subscribe(slot)" id="slot">{{ slot }}</button>
-          <button *ngIf="isSubscribed" (click)="unsubscribe(slot)" id="slot">Unsubscribe {{ slot }}</button>
+          <button *ngIf="!isSubscribed" (click)="subscribe(slot)" id="slot">{{ slot }}<p>Subscribe</p></button>
+          <button *ngIf="isSubscribed" (click)="unsubscribe(slot)" id="slot">Unsubscribe {{ slot}}</button>
         </div>
       </mat-card-content>
     </mat-card>

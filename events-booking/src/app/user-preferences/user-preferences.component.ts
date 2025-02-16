@@ -13,12 +13,19 @@ import { EventServiceService } from '../event-service.service';
   styleUrl: './user-preferences.component.css'
 })
 export class UserPreferencesComponent implements OnInit {
-  categories = ['Cat 1', 'Cat 2', 'Cat 3'];
+  categories: any = [];
   selectedCategory: string = '';
 
-  constructor(private router: Router, private eventservice:EventServiceService) { }
+  constructor(private router: Router, private eventservice:EventServiceService) { 
+    
+  }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.eventservice.get_all_categories().subscribe((resp)=>{
+      this.categories = resp;
+    });
+  }
+  
 
   onCategorySelect(category: string): void {
     this.selectedCategory = category;
